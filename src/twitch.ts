@@ -48,7 +48,7 @@ class Twitch {
     }, 60000);
   }
 
-  requestOptions(): RequestOptions {
+  get requestOptions(): RequestOptions {
     return {
       baseURL: "https://api.twitch.tv/helix/",
       headers: {
@@ -82,7 +82,7 @@ class Twitch {
     Log.info(`Fetching stream infor for channel #${channel}`);
     let res;
     try {
-      res = await axios.get(`/streams?user_login=${channel}`, this.requestOptions());
+      res = await axios.get(`/streams?user_login=${channel}`, this.requestOptions);
     } catch (err) {
       Log.error(`Error fetching stream info from Twitch API ${err.message}`);
     }
