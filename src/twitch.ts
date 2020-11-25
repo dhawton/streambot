@@ -16,17 +16,6 @@ interface RequestOptions {
   };
 }
 
-interface TwitchUser {
-  id?: string;
-  bio?: string;
-  created_at?: string;
-  display_name?: string;
-  logo?: string | null;
-  name?: string;
-  type?: string;
-  updated_at?: string;
-}
-
 interface TwitchStreamInfo {
   id: string;
   user_id: string;
@@ -89,44 +78,22 @@ class Twitch {
     }
   }
 
-  fetchUser(channel: string): Promise<TwitchUser> {
-    return new Promise((resolve, reject) => {
-      axios
-        .get(`/users?login=${channel}`, this.requestOptions())
-        .then((res) => {
-          Log.info(JSON.stringify(res.data.data[0]));
-          resolve(res.data.data[0] || []);
-        })
-        .catch((err) => {
-          Log.error(`Error fetching user info from Twitch API ${err.message}`);
-          reject(err);
-        });
-    });
-  }
-
-  fetchStreamInfo(channel: string): Promise<TwitchStreamInfo> {
+  async fetchStreamInfo(channel: string): Promise<TwitchStreamInfo | null> {
     Log.info(`Fetching stream infor for channel #${channel}`);
-    return new Promise((resolve, reject) => {
-      axios
-        .get(`/streams?user_login=${channel}`, this.requestOptions())
-        .then((res) => {
-          // Log.info(JSON.stringify(res.data.data[0]));
-          resolve(res.data.data[0] || null);
-        })
-        .catch((err) => {
-          Log.info(JSON.stringify(err));
-          Log.error(`Error fetching stream info from Twitch API ${err.message}`);
-          reject(err);
-        });
-    });
+    let res;
+    try {
+      res = await axios.get(`/streams?user_login=${channel}`, this.requestOptions());
+    } catch (err) {
+      Log.error(`Error fetching stream info from Twitch API ${err.message}`);
+    }
+
+    return res.data.data[0] || null;
   }
 
   // Run every minute to see if we're within 5 minutes of token expiration
   checkOAuth(): void {
-    if (this.config.token) {
-      if (this.config.tokenExpires - new Date().getTime() > 5 * 60 * 1000) {
-        this.fetchOAuth();
-      }
+    if (this.config.token && this.config.tokenExpires - new Date().getTime() > 5 * 60 * 1000) {
+      this.fetchOAuth();
     }
   }
 }
