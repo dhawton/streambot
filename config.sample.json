@@ -1,0 +1,11 @@
+{
+  "discord": {
+    "token": "",
+    "announceChannel": "promote-your-content",
+    "role": ""
+  },
+  "twitch": {
+    "clientId": "",
+    "secret": ""
+  }
+}
