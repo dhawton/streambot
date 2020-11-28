@@ -79,7 +79,7 @@ class Twitch {
   }
 
   async fetchStreamInfo(channel: string): Promise<TwitchStreamInfo | null> {
-    Log.info(`Fetching stream infor for channel #${channel}`);
+    Log.info(`Fetching stream infor for channel ${channel}`);
     let res;
     try {
       res = await axios.get(`/streams?user_login=${channel}`, this.requestOptions);
