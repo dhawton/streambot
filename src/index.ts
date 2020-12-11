@@ -61,7 +61,7 @@ client.on(
               return;
             }
 
-            const msg = LiveEmbed.createFromStream(streamData);
+            const msg = LiveEmbed.createFromStream(streamData[0]);
             guild = newPresence.guild;
             Utils.sendMessage(
               newPresence.guild,
@@ -96,7 +96,7 @@ setInterval(() => {
     Object.keys(Streams).forEach(async (key) => {
       const v = Streams[key];
       try {
-        await twitch.fetchStreamInfo(v).then(
+        await twitch.fetchStreamInfo(key).then(
           async (streamData): Promise<void> => {
             if (streamData.length === 0) {
               Streams[key] = undefined;
