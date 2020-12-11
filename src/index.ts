@@ -7,7 +7,7 @@ import Twitch from "./twitch";
 import LiveEmbed from "./embed";
 
 const Streamers: { [key: string]: boolean } = {};
-let Streams: { channel: string; tag: string }[] = [];
+const Streams: { [key: string]: string } = {};
 let guild: Discord.Guild;
 let streamLock = false;
 
@@ -72,7 +72,8 @@ client.on(
               msg,
             );
             Streamers[newPresence.user.tag] = true;
-            Streams.push({ channel, tag: newPresence.user.tag });
+            Streams[channel] = newPresence.user.tag;
+            Log.info(JSON.stringify(Streams));
             try {
               await guild.members.cache
                 .find((member) => member.user.tag === newPresence.user.tag)
@@ -92,22 +93,27 @@ client.on(
 setInterval(() => {
   if (!streamLock) {
     streamLock = true;
-    const newStreams = Streams;
-    Streams.forEach((v) => {
-      twitch.fetchStreamInfo(v.channel).then(
-        async (streamData): Promise<void> => {
-          if (!streamData) {
-            newStreams.filter((s) => s.channel === v.channel);
-            try {
-              await guild.members.cache.find((member) => member.user.tag === v.tag).roles.remove(streamRole);
-            } catch (err) {
-              Log.error(`Error clearing role for ${v.tag}, ${err}`);
+    Object.keys(Streams).forEach(async (key) => {
+      const v = Streams[key];
+      try {
+        await twitch.fetchStreamInfo(v).then(
+          async (streamData): Promise<void> => {
+            if (streamData.length === 0) {
+              Streams[key] = undefined;
+              try {
+                await guild.members.cache.find((member) => member.user.tag === v).roles.remove(streamRole);
+              } catch (err) {
+                Log.error(`Error clearing role for ${v}, ${err}`);
+              }
             }
-          }
-        },
-      );
+          },
+        );
+      } catch (err) {
+        Log.error(err);
+        Log.error(err.trace);
+      }
     });
-    Streams = newStreams;
+    Log.info(`interval check, active streams are: ${JSON.stringify(Streams)}`);
     streamLock = false;
   }
 }, 120000);

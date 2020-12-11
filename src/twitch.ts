@@ -78,7 +78,7 @@ class Twitch {
     }
   }
 
-  async fetchStreamInfo(channel: string): Promise<TwitchStreamInfo | null> {
+  async fetchStreamInfo(channel: string): Promise<TwitchStreamInfo[]> {
     Log.info(`Fetching stream infor for channel ${channel}`);
     let res;
     try {
@@ -87,7 +87,7 @@ class Twitch {
       Log.error(`Error fetching stream info from Twitch API ${err.message}`);
     }
 
-    return res.data.data[0] || null;
+    return res.data.data;
   }
 
   // Run every minute to see if we're within 5 minutes of token expiration
