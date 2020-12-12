@@ -99,12 +99,12 @@ setInterval(() => {
         await twitch.fetchStreamInfo(key).then(
           async (streamData): Promise<void> => {
             if (streamData.length === 0) {
-              Streams[key] = undefined;
               try {
                 await guild.members.cache.find((member) => member.user.tag === v).roles.remove(streamRole);
               } catch (err) {
                 Log.error(`Error clearing role for ${v}, ${err}`);
               }
+              Streams[key] = undefined;
             }
           },
         );
