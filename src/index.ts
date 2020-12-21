@@ -103,6 +103,7 @@ const handleCheck = () => {
                 const m = await guild.members.cache.find((member) => member.user.tag === v);
                 if (m === undefined) {
                   Log.error(`Could not lookup member with tag ${v}`);
+                  Log.debug(JSON.stringify(guild.members.cache.map(member => member.user.tag)));
                 } else {
                   m.roles.remove(streamRole);
                 }
