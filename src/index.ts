@@ -90,7 +90,7 @@ client.on(
   },
 );
 
-setInterval(() => {
+const handleCheck = () => {
   if (!streamLock) {
     streamLock = true;
     Object.keys(Streams).forEach(async (key) => {
@@ -121,6 +121,8 @@ setInterval(() => {
     Log.info(`interval check, active streams are: ${JSON.stringify(Streams)}`);
     streamLock = false;
   }
-}, 120000);
+};
+
+setInterval(handleCheck, 120000);
 
 client.login(config.discord.token);
