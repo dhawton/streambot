@@ -2,7 +2,7 @@ import Discord from "discord.js";
 
 class Utils {
   static isVBRP(details: string): boolean {
-    if (details.indexOf("VBRP") !== -1 || details.indexOf("Vespucci Beach") !== -1) {
+    if (details.toUpperCase().indexOf("VBRP") !== -1 || details.toUpperCase().indexOf("VESPUCCI BEACH") !== -1) {
       return true;
     }
 

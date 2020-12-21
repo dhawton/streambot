@@ -100,7 +100,12 @@ setInterval(() => {
           async (streamData): Promise<void> => {
             if (streamData.length === 0) {
               try {
-                await guild.members.cache.find((member) => member.user.tag === v).roles.remove(streamRole);
+                const m = await guild.members.cache.find((member) => member.user.tag === v);
+                if (m === undefined) {
+                  Log.error(`Could not lookup member with tag ${v}`);
+                } else {
+                  m.roles.remove(streamRole);
+                }
               } catch (err) {
                 Log.error(`Error clearing role for ${v}, ${err}`);
               }
